@@ -1,6 +1,7 @@
 package com.dcoders.recipeapp
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,7 +29,9 @@ import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun CateogyListScreen(modifier: Modifier=Modifier){
+fun CateogyListScreen(modifier: Modifier=Modifier,
+                      categoryState:MainActivityViewModel.CategoryState,
+                      navigateToDetail:(Category)->Unit){
     val mainActivityViewModel:MainActivityViewModel= viewModel()
     val categoryState by mainActivityViewModel.categoryState
 
@@ -41,23 +44,25 @@ fun CateogyListScreen(modifier: Modifier=Modifier){
                 Text(text = "Error occured")
             }
             else ->{
-                CategoryListOfItems(categoryState.catgeoryList)
+                CategoryListOfItems(categoryState.catgeoryList,navigateToDetail)
             }
         }
 
     }
 }
 @Composable
-fun CategoryListOfItems(categoryList:List<Category>){
+fun CategoryListOfItems(categoryList:List<Category>,navigateToDetail:(Category)->Unit){
     LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.fillMaxSize() ){
             items(categoryList){category->
-                CategoryItem(categoryItem = category)
+                CategoryItem(categoryItem = category,navigateToDetail)
             }
     }
 }
 @Composable
-fun CategoryItem(categoryItem:Category){
-    Column {
+fun CategoryItem(categoryItem:Category,navigateToDetail:(Category)->Unit){
+    Column(
+        Modifier.clickable { navigateToDetail(categoryItem) }
+    ){
         Image(painter = rememberAsyncImagePainter(categoryItem.strCategoryThumb),
             contentDescription =null,
             modifier=Modifier.aspectRatio(1f)
